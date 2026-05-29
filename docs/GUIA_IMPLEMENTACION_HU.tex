@@ -1,0 +1,548 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+%  Guía de implementación HU9 / HU11 / HU12 / HU14 — Nanys Care
+%  Tema adecuado a la paleta de la app (rosa / lila / naranja)
+%  Compilar con: pdflatex (2 pasadas)
+% ============================================================
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-noindentfirst]{babel}
+\usepackage{lmodern}
+\usepackage{amssymb}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage[a4paper,margin=2.4cm,headheight=15pt]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+% ---------- Paleta del tema (AppColors) ----------
+\definecolor{appPrimary}{HTML}{E91E63}   % Rosa cálido
+\definecolor{appPrimaryDark}{HTML}{C2185B}
+\definecolor{appPrimaryLight}{HTML}{F8BBD0}
+\definecolor{appSecondary}{HTML}{7E57C2} % Lila
+\definecolor{appAccent}{HTML}{FFB74D}    % Naranja suave
+\definecolor{appSuccess}{HTML}{4CAF50}
+\definecolor{appWarning}{HTML}{FFA726}
+\definecolor{appError}{HTML}{E53935}
+\definecolor{appInfo}{HTML}{29B6F6}
+\definecolor{appText}{HTML}{2D2D2D}
+\definecolor{appTextSec}{HTML}{6B6B6B}
+\definecolor{appBg}{HTML}{FFF8F9}
+\definecolor{codeBg}{HTML}{2D2233}
+\definecolor{codeKw}{HTML}{F48FB1}
+\definecolor{codeStr}{HTML}{B39DDB}
+\definecolor{codeCom}{HTML}{9E9E9E}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=appPrimaryDark,
+  urlcolor=appSecondary,
+  pdftitle={Guia de implementacion HU9 HU11 HU12 HU14 - Nanys Care}
+}
+
+% ---------- Encabezado / pie ----------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[L]{\footnotesize\color{appTextSec}\textbf{Nanys\,Care}}
+\fancyhead[R]{\footnotesize\color{appTextSec}Guía de implementación}
+\fancyfoot[C]{\footnotesize\color{appTextSec}\thepage}
+
+% ---------- Títulos de sección ----------
+\titleformat{\section}
+  {\Large\bfseries\color{appPrimaryDark}}
+  {}{0pt}
+  {\colorbox{appPrimaryLight}{\makebox[0.55em]{}}\hspace{0.6em}}
+\titlespacing*{\section}{0pt}{1.6em}{0.8em}
+
+\titleformat{\subsection}
+  {\large\bfseries\color{appSecondary}}{}{0pt}{}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
+
+% ---------- Estilo de código (Dart) ----------
+\lstdefinelanguage{Dart}{
+  keywords={abstract,async,await,class,const,extends,final,for,if,return,
+    void,Future,List,bool,double,int,String,var,new,this,required,super,
+    continue,true,false,null,import,not},
+  morekeywords=[2]{Widget,BuildContext,StatelessWidget,FutureBuilder,Column,
+    Text,Card,ListTile,Icon,Scaffold,AppBar},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]"
+}
+\lstset{
+  language=Dart,
+  backgroundcolor=\color{codeBg},
+  basicstyle=\ttfamily\scriptsize\color{white},
+  keywordstyle=\color{codeKw}\bfseries,
+  keywordstyle=[2]\color{appInfo},
+  stringstyle=\color{codeStr},
+  commentstyle=\color{codeCom}\itshape,
+  numbers=left,
+  numberstyle=\tiny\color{codeCom},
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  framesep=8pt,
+  rulecolor=\color{codeBg},
+  xleftmargin=6pt,
+  aboveskip=10pt,
+  belowskip=10pt,
+  columns=fullflexible,
+  keepspaces=true,
+}
+
+% ---------- Cajas (callouts) ----------
+\newtcolorbox{nota}[1][Nota]{
+  colback=appInfo!8, colframe=appInfo, coltitle=white,
+  fonttitle=\bfseries\small, title=#1, boxrule=0.8pt, arc=4pt,
+  left=8pt,right=8pt,top=6pt,bottom=6pt}
+\newtcolorbox{tip}[1][Recomendación]{
+  colback=appSecondary!8, colframe=appSecondary, coltitle=white,
+  fonttitle=\bfseries\small, title=#1, boxrule=0.8pt, arc=4pt,
+  left=8pt,right=8pt,top=6pt,bottom=6pt}
+\newtcolorbox{listo}[1][Hecho cuando...]{
+  colback=appSuccess!8, colframe=appSuccess, coltitle=white,
+  fonttitle=\bfseries\small, title=#1, boxrule=0.8pt, arc=4pt,
+  left=8pt,right=8pt,top=6pt,bottom=6pt}
+
+\newcommand{\hu}[1]{\textcolor{appPrimary}{\textbf{#1}}}
+\setlist[itemize]{leftmargin=1.4em,itemsep=2pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=3pt,topsep=3pt}
+
+% ============================================================
+\begin{document}
+
+% ---------- Portada ----------
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{tcolorbox}[colback=appPrimary,colframe=appPrimary,arc=10pt,
+  left=24pt,right=24pt,top=28pt,bottom=28pt,halign=left]
+  {\color{white}\Huge\bfseries Guía de implementación}\\[6pt]
+  {\color{appPrimaryLight}\LARGE HU9 · HU11 · HU12 · HU14}
+\end{tcolorbox}
+
+\vspace{1.4cm}
+{\color{appText}\Large\bfseries Nanys Care}\\[2pt]
+{\color{appTextSec}\large Aplicación de cuidado infantil — Flutter}
+
+\vspace{0.8cm}
+{\color{appTextSec}
+Plan técnico para implementar las historias de usuario de\\
+\textbf{recordatorios automáticos}, \textbf{calificación de cuidadores},
+\textbf{evaluación de tutores} y \textbf{recordatorios de citas},
+respetando la arquitectura actual del proyecto
+(modelos + servicios \texttt{ChangeNotifier} + \texttt{StorageService}).}
+
+\vfill
+\begin{tcolorbox}[colback=appBg,colframe=appPrimaryLight,arc=8pt,
+  left=16pt,right=16pt,top=12pt,bottom=12pt]
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\linewidth}{>{\bfseries\color{appPrimaryDark}}l X}
+HU9  & Recordatorios automáticos \\
+HU11 & Calificar cuidadores \\
+HU12 & Evaluar tutores \\
+HU14 & Recordatorios de citas \\
+\end{tabularx}
+\end{tcolorbox}
+
+\vspace{0.6cm}
+{\color{appTextSec}\small Documento técnico generado para el proyecto
+\texttt{blasphatrocraft\_sa\_nannyscare} (rama \texttt{version1}).}
+\end{titlepage}
+
+% ---------- Índice ----------
+\renewcommand{\contentsname}{\textcolor{appPrimaryDark}{Contenido}}
+\tableofcontents
+\vspace{1em}
+
+% ============================================================
+\section{Estado actual y alcance}
+
+La guía cubre cuatro historias de usuario. El proyecto ya tiene la base
+(modelos \texttt{Resena} y \texttt{Notificacion}, almacenamiento local y
+pantallas por rol), por lo que en varios casos solo hay que completar el flujo.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\linewidth}{c >{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}X}
+\toprule
+\rowcolor{appPrimaryLight}
+\textbf{HU} & \textbf{Título} & \textbf{Estado actual} \\
+\midrule
+\hu{HU9}  & Recordatorios automáticos & No existe el motor de recordatorios. \\
+\hu{HU11} & Calificar cuidadores      & Parcial: ya se crea la \texttt{Resena}; falta promedio, evitar duplicados y mostrarlas. \\
+\hu{HU12} & Evaluar tutores           & Parcial: ya existe la ``nota privada''; falta pantalla para consultarlas. \\
+\hu{HU14} & Recordatorios de citas    & Depende de HU9. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{nota}[HU9 + HU14 van juntas]
+HU9 es el \textbf{motor} (servicio que genera recordatorios) y HU14 es su
+\textbf{primer uso} (recordatorios de citas próximas).
+\end{nota}
+
+\subsection*{Orden recomendado}
+\begin{enumerate}
+  \item \hu{HU11} — completa lo ya empezado; es la más rápida.
+  \item \hu{HU12} — reutiliza casi todo de HU11.
+  \item \hu{HU9 + HU14} — el motor nuevo de recordatorios.
+\end{enumerate}
+
+% ============================================================
+\section{HU11 — Calificar cuidadores}
+
+Hoy \texttt{tutor\_citas\_screen.dart} (\texttt{\_calificar}) ya guarda una
+\texttt{Resena}, pero \emph{no} actualiza el promedio del cuidador, permite
+calificar la misma cita varias veces y las reseñas no se muestran.
+
+\subsection{Paso 1 — Crear un \texttt{ResenaService}}
+Centraliza la lógica para no repetir código entre tutor y cuidador.
+Crea \texttt{lib/services/resena\_service.dart}:
+
+\begin{lstlisting}
+import 'package:flutter/foundation.dart';
+import '../models/resena.dart';
+import 'storage_service.dart';
+
+class ResenaService extends ChangeNotifier {
+  final StorageService _storage;
+  ResenaService(this._storage);
+
+  // Resenas PUBLICAS recibidas por un usuario (para mostrar en su perfil).
+  Future<List<Resena>> getResenasPublicas(String destinatarioId) async {
+    final all = await _storage.getResenas();
+    final list = all
+        .where((r) => r.destinatarioId == destinatarioId && !r.esPrivada)
+        .toList();
+    list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return list;
+  }
+
+  // Notas PRIVADAS escritas por un autor (HU12 / RF15).
+  Future<List<Resena>> getNotasPrivadas(String autorId) async {
+    final all = await _storage.getResenas();
+    final list = all.where((r) => r.autorId == autorId && r.esPrivada).toList();
+    list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return list;
+  }
+
+  // Evita duplicados: el autor ya califico esta cita?
+  Future<bool> yaCalifico(String citaId, String autorId) async {
+    final all = await _storage.getResenas();
+    return all.any((r) => r.citaId == citaId && r.autorId == autorId);
+  }
+
+  Future<void> crearResena(Resena resena) async {
+    await _storage.addResena(resena);
+    if (!resena.esPrivada) {
+      await _storage.recalcularCalificacionCuidador(resena.destinatarioId);
+    }
+    notifyListeners();
+  }
+}
+\end{lstlisting}
+
+\subsection{Paso 2 — Recalcular el promedio en \texttt{StorageService}}
+Añade este método en \texttt{lib/services/storage\_service.dart}
+(sección RESEÑAS):
+
+\begin{lstlisting}
+// Recalcula y persiste calificacionPromedio segun resenas publicas.
+Future<void> recalcularCalificacionCuidador(String cuidadorId) async {
+  final resenas = await getResenas();
+  final publicas = resenas
+      .where((r) => r.destinatarioId == cuidadorId && !r.esPrivada)
+      .toList();
+  if (publicas.isEmpty) return;
+
+  final promedio =
+      publicas.fold<double>(0, (s, r) => s + r.calificacion) / publicas.length;
+
+  final perfiles = await getPerfilesCuidador();
+  final idx = perfiles.indexWhere((p) => p.userId == cuidadorId);
+  if (idx < 0) return;
+
+  final p = perfiles[idx];
+  perfiles[idx] = PerfilCuidador(
+    userId: p.userId, descripcion: p.descripcion,
+    nivelExperiencia: p.nivelExperiencia, certificaciones: p.certificaciones,
+    capacidades: p.capacidades, tarifaPorHora: p.tarifaPorHora,
+    ubicacion: p.ubicacion, diasDisponibles: p.diasDisponibles,
+    horarioDisponible: p.horarioDisponible,
+    calificacionPromedio: double.parse(promedio.toStringAsFixed(1)),
+    totalServicios: p.totalServicios, verificado: p.verificado,
+  );
+  await savePerfilesCuidador(perfiles);
+}
+\end{lstlisting}
+
+\begin{tip}
+Más limpio: añade un \texttt{copyWith} a \texttt{PerfilCuidador} (como ya lo
+tiene \texttt{Cita}) y úsalo aquí. Recomendado, opcional.
+\end{tip}
+
+\subsection{Paso 3 — Registrar el servicio en \texttt{main.dart}}
+\begin{lstlisting}
+final resenas = ResenaService(storage);
+// ...y dentro del MultiProvider:
+ChangeNotifierProvider<ResenaService>.value(value: resenas),
+\end{lstlisting}
+Recuerda agregar el campo y el \texttt{required this.resenas} en el constructor
+de \texttt{NanysCareApp}, igual que los demás servicios.
+
+\subsection{Paso 4 — Usar el servicio en \texttt{tutor\_citas\_screen.dart}}
+En \texttt{\_calificar}, valida duplicados antes del diálogo y al enviar usa
+\texttt{crearResena} en vez de \texttt{storage.addResena}:
+
+\begin{lstlisting}
+final resenaSvc = context.read<ResenaService>();
+if (await resenaSvc.yaCalifico(cita.id, auth.currentUser!.id)) {
+  // SnackBar "Ya calificaste esta cita" y return
+}
+// ...al confirmar:
+await resenaSvc.crearResena(resena); // recalcula el promedio
+\end{lstlisting}
+
+\subsection{Paso 5 — Mostrar las reseñas en el perfil del cuidador}
+En \texttt{cuidador\_detalle\_screen.dart}, agrega una sección ``Reseñas''
+(es \texttt{StatelessWidget}, usa \texttt{FutureBuilder}):
+
+\begin{lstlisting}
+_SectionTitle('Resenas'),
+FutureBuilder<List<Resena>>(
+  future: context.read<ResenaService>().getResenasPublicas(user.id),
+  builder: (context, snap) {
+    if (!snap.hasData) return const SizedBox.shrink();
+    final resenas = snap.data!;
+    if (resenas.isEmpty) return const Text('Aun no tiene resenas');
+    return Column(
+      children: resenas.map((r) => ListTile(
+        leading: const Icon(Icons.star, color: AppColors.warning),
+        title: Text('${r.autorNombre}  ${r.calificacion.toStringAsFixed(1)}'),
+        subtitle: Text(r.comentario),
+      )).toList(),
+    );
+  },
+),
+\end{lstlisting}
+
+\begin{listo}
+El tutor califica una cita completada, \emph{no} puede repetir, el promedio del
+cuidador sube y las reseñas aparecen en su perfil.
+\end{listo}
+
+% ============================================================
+\section{HU12 — Evaluar tutores}
+
+\texttt{cuidador\_solicitudes\_screen.dart} (\texttt{\_pedirNotaPrivada}) ya crea
+una \texttt{Resena} con \texttt{esPrivada: true} al completar la cita. Falta una
+pantalla donde el cuidador \textbf{consulte} esas evaluaciones.
+
+\subsection{Decisión de diseño}
+\begin{itemize}
+  \item \textbf{Privada (RF15):} la evaluación del tutor solo la ve quien la
+        escribió. Es lo que ya hace el código; mantenlo así.
+  \item Si tu HU12 exige que \textbf{administrador/supervisor} vean las
+        evaluaciones de tutores, entonces no la marques privada o añade un rol
+        autorizado a leerlas.
+\end{itemize}
+
+\subsection{Paso 1 — Reusar \texttt{ResenaService}}
+Cambia \texttt{storage.addResena(...)} por:
+\begin{lstlisting}
+await context.read<ResenaService>().crearResena(resena); // esPrivada: true
+\end{lstlisting}
+y valida duplicados con \texttt{yaCalifico(cita.id, autorId)}, igual que en HU11.
+
+\subsection{Paso 2 — Pantalla ``Mis notas de tutores''}
+Crea \texttt{lib/screens/cuidador/cuidador\_notas\_screen.dart}:
+
+\begin{lstlisting}
+class CuidadorNotasScreen extends StatelessWidget {
+  const CuidadorNotasScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = context.watch<AuthService>().currentUser!;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Mis notas de tutores')),
+      body: FutureBuilder<List<Resena>>(
+        future: context.read<ResenaService>().getNotasPrivadas(user.id),
+        builder: (context, snap) {
+          if (!snap.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final notas = snap.data!;
+          if (notas.isEmpty) {
+            return const Center(child: Text('Aun no tienes notas privadas'));
+          }
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: notas.map((n) => Card(
+              child: ListTile(
+                leading: const Icon(Icons.lock_outline),
+                title: Text('${n.calificacion.toStringAsFixed(1)} estrellas'),
+                subtitle: Text(n.comentario.isEmpty ? '(sin comentario)' : n.comentario),
+              ),
+            )).toList(),
+          );
+        },
+      ),
+    );
+  }
+}
+\end{lstlisting}
+
+\subsection{Paso 3 — Enlazar la pantalla}
+Agrega un acceso desde \texttt{cuidador\_home.dart} o
+\texttt{cuidador\_perfil\_screen.dart} (un \texttt{ListTile}/botón con
+\texttt{Navigator.push} a \texttt{CuidadorNotasScreen}).
+
+\begin{listo}
+Al completar una cita el cuidador evalúa al tutor y puede volver a ver esas
+evaluaciones en ``Mis notas de tutores''.
+\end{listo}
+
+% ============================================================
+\section{HU9 + HU14 — Recordatorios automáticos / de citas}
+
+No hay backend ni \emph{cron}, así que el patrón realista es: \textbf{revisar las
+citas al arrancar la app o al refrescar el home y generar notificaciones de tipo
+\texttt{recordatorio} para las citas próximas que aún no tengan una.}
+
+\subsection{Paso 1 — Crear \texttt{ReminderService}}
+Crea \texttt{lib/services/reminder\_service.dart}:
+
+\begin{lstlisting}
+import '../models/cita.dart';
+import '../models/notificacion.dart';
+import 'storage_service.dart';
+import 'notification_service.dart';
+
+// HU9/HU14: genera recordatorios automaticos de citas proximas.
+class ReminderService {
+  final StorageService _storage;
+  final NotificationService _notifications;
+  ReminderService(this._storage, this._notifications);
+
+  Future<void> generarRecordatoriosPendientes() async {
+    final ahora = DateTime.now();
+    final citas = await _storage.getCitas();
+    final existentes = await _storage.getNotificaciones();
+
+    for (final c in citas) {
+      if (c.estado != EstadoCita.aceptada) continue;   // solo confirmadas
+      final faltan = c.fechaInicio.difference(ahora);
+      if (faltan.isNegative) continue;                  // ya paso
+      if (faltan.inHours > 24) continue;                // dentro de 24h
+
+      bool yaTiene(String userId) => existentes.any((n) =>
+          n.tipo == TipoNotificacion.recordatorio &&
+          n.usuarioId == userId && n.mensaje.contains(c.id));
+
+      final cuando = _fmt(c.fechaInicio);
+      if (!yaTiene(c.tutorId)) {
+        await _notifications.enviarNotificacion(
+          usuarioId: c.tutorId, titulo: 'Recordatorio de cita',
+          mensaje: 'Tu cita con ${c.cuidadorNombre} es el $cuando. [${c.id}]',
+          tipo: TipoNotificacion.recordatorio);
+      }
+      if (!yaTiene(c.cuidadorId)) {
+        await _notifications.enviarNotificacion(
+          usuarioId: c.cuidadorId, titulo: 'Recordatorio de cita',
+          mensaje: 'Tienes una cita con ${c.tutorNombre} el $cuando. [${c.id}]',
+          tipo: TipoNotificacion.recordatorio);
+      }
+    }
+  }
+
+  String _fmt(DateTime d) =>
+      '${d.day}/${d.month}/${d.year} ${d.hour}:${d.minute}';
+}
+\end{lstlisting}
+
+\begin{nota}[Detección de duplicados]
+El \texttt{[\$\{c.id\}]} dentro del mensaje permite detectar duplicados sin tocar
+el modelo. Si prefieres algo más limpio, agrega un campo opcional \texttt{citaId}
+a \texttt{Notificacion} (actualizando \texttt{toJson}/\texttt{fromJson}).
+\end{nota}
+
+\subsection{Paso 2 — Registrar y disparar}
+En \texttt{main.dart}:
+\begin{lstlisting}
+final reminders = ReminderService(storage, notifications);
+await reminders.generarRecordatoriosPendientes(); // al arrancar
+\end{lstlisting}
+Vuelve a llamarlo al entrar al home o en el \emph{pull-to-refresh} de
+\texttt{notificaciones\_screen.dart} (dentro de \texttt{\_load}):
+\begin{lstlisting}
+await context.read<ReminderService>().generarRecordatoriosPendientes();
+\end{lstlisting}
+
+\subsection{Paso 3 (opcional) — HU9 más amplio}
+El mismo servicio puede generar otros recordatorios:
+\begin{itemize}
+  \item recordar al tutor \textbf{calificar} una cita completada sin reseña (enlaza con HU11);
+  \item recordar al cuidador \textbf{completar} una cita aceptada cuya \texttt{fechaFin} ya pasó.
+\end{itemize}
+La UI ya está lista: \texttt{notificaciones\_screen.dart} muestra el ícono de
+alarma y color naranja para \texttt{TipoNotificacion.recordatorio}.
+
+\begin{listo}
+Al abrir la app, las citas aceptadas dentro de las próximas 24\,h generan una
+notificación de recordatorio (sin duplicarse) visible para tutor y cuidador.
+\end{listo}
+
+% ============================================================
+\section{Checklist y pruebas}
+
+\subsection*{Checklist}
+\begin{itemize}[label=$\square$]
+  \item \texttt{ResenaService} creado y registrado en \texttt{main.dart}.
+  \item \texttt{StorageService.recalcularCalificacionCuidador} añadido.
+  \item HU11: validación de duplicado + promedio actualizado + reseñas visibles.
+  \item HU12: \texttt{crearResena} con \texttt{esPrivada:true} + pantalla ``Mis notas''.
+  \item \texttt{ReminderService} creado y registrado.
+  \item HU9/HU14: recordatorios al arrancar y al refrescar notificaciones.
+  \item \texttt{flutter analyze} sin errores y \texttt{flutter run} probado.
+\end{itemize}
+
+\subsection*{Cómo probar rápido (datos demo)}
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\linewidth}{>{\bfseries\color{appPrimaryDark}}l X}
+Tutor     & \texttt{carlos@nanyscare.com} / \texttt{123456} \\
+Cuidadora & \texttt{maria@nanyscare.com} / \texttt{123456} \\
+\end{tabularx}
+\end{center}
+
+\textbf{Flujo:} el tutor agenda cita $\rightarrow$ la cuidadora la acepta
+$\rightarrow$ la cuidadora la ``marca completada'' (evalúa al tutor, HU12)
+$\rightarrow$ el tutor califica (HU11) $\rightarrow$ reabrir la app para ver los
+recordatorios (HU9/HU14). Para reiniciar datos: \texttt{StorageService.reset()}.
+
+\vspace{1.2em}
+\begin{center}
+\color{appTextSec}\small\rule{0.4\linewidth}{0.4pt}\\[4pt]
+Nanys Care · Documento técnico interno
+\end{center}
+
+\end{document}

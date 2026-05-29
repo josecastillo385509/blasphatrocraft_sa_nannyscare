@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/user.dart';
 import '../../services/auth_service.dart';
+import '../../services/security_service.dart';
 import '../../theme/app_theme.dart';
 import '../home/home_router.dart';
 
@@ -177,10 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Ingresa una contraseña';
                     }
-                    if (value.length < 6) {
-                      return 'Mínimo 6 caracteres';
-                    }
-                    return null;
+                    return SecurityService.validarPassword(value);
                   },
                 ),
                 const SizedBox(height: 16),

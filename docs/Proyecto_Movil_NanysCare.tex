@@ -1,0 +1,507 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{estilo_nanys}
+
+% ---------- Entornos de los entregables ----------
+\newtcolorbox{hu}[2]{enhanced,breakable,colback=paper,colframe=guinda!30,
+  boxrule=0.8pt,arc=4pt,left=8pt,right=8pt,top=6pt,bottom=8pt,
+  colbacktitle=guinda,coltitle=white,fonttitle=\bfseries,title={#1 \textnormal{·} #2}}
+\newcommand{\rqp}[3]{%
+  \textbf{Como} #1, \textbf{quiero} #2, \textbf{para} #3.\par\vspace{4pt}
+  \textbf{\color{guindaDark}Criterios de aceptación:}}
+\newcommand{\kcard}[1]{%
+  \begin{tcolorbox}[colback=white,colframe=guinda!25,boxrule=0.6pt,arc=3pt,
+    left=5pt,right=5pt,top=3pt,bottom=3pt,fontupper=\scriptsize]#1\end{tcolorbox}%
+  \vspace{3pt}}
+\newcommand{\kcol}[1]{%
+  \begin{tcolorbox}[colback=guinda,colframe=guinda,arc=3pt,
+    left=4pt,right=4pt,top=3pt,bottom=3pt,halign=center]%
+    {\color{white}\bfseries\footnotesize #1}\end{tcolorbox}\vspace{4pt}}
+\newtcolorbox{fase}[2]{enhanced,breakable,colback=paper,colframe=guinda!30,
+  boxrule=0.8pt,arc=4pt,left=10pt,right=10pt,top=6pt,bottom=8pt,
+  colbacktitle=guinda,coltitle=white,fonttitle=\bfseries,title={#1 \textnormal{·} #2}}
+\newtcolorbox{epica}[2]{enhanced,breakable,colback=paper,colframe=guinda!30,
+  boxrule=0.8pt,arc=4pt,left=10pt,right=10pt,top=6pt,bottom=8pt,
+  colbacktitle=guinda,coltitle=white,fonttitle=\bfseries,title={#1 \textnormal{·} #2}}
+\newtcolorbox{adr}[2]{enhanced,breakable,colback=paper,colframe=guinda!30,
+  boxrule=0.8pt,arc=4pt,left=10pt,right=10pt,top=6pt,bottom=8pt,
+  colbacktitle=guinda,coltitle=white,fonttitle=\bfseries,title={#1 \textnormal{·} #2}}
+\newcommand{\adrcampo}[1]{\par\smallskip\textbf{\color{guindaDark}#1:}\ }
+\newtcolorbox{paso}{enhanced,breakable,colback=paper,colframe=guinda!25,
+  boxrule=0.7pt,arc=4pt,left=8pt,right=8pt,top=6pt,bottom=6pt}
+
+\renewcommand{\contentsname}{\textcolor{guinda}{Contenido}}
+
+\begin{document}
+\portada{Documento de Entregables}{Backlog · Historias · Métricas · Roadmap · Release · Impedimentos · Manual · Arquitectura}
+
+\tableofcontents
+\clearpage
+
+% =====================================================================
+\section{Resumen de entregables}
+Este documento reúne los \textbf{entregables} del proyecto móvil
+\textbf{Nanys Care}, una plataforma que conecta familias con cuidadores de
+confianza. Cada entregable aporta evidencia de la gestión ágil del producto.
+Código fuente público: \repolink
+
+\vspace{0.4em}
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}l X l@{}}
+\rowcolor{guinda}
+\thead{\#} & \thead{Entregable} & \thead{Sección}\\
+\midrule
+1  & Documento de Manual de Usuario                       & §8 \\
+2  & Documento de Decisiones de Arquitectura              & §9 \\
+3  & Repositorio de código público (Git)                  & \repotexto \\
+4  & Tablero Kanban (Trello)                              & §4.4 \\
+5  & Métricas de proceso (velocidad y burndown)           & §4 \\
+6  & Registro y eliminación de obstáculos                 & §7 \\
+7  & Lista priorizada de historias y requisitos (Backlog) & §2 \\
+8  & Hoja de ruta estratégica (Roadmap)                   & §5 \\
+9  & Planificación de lanzamientos (épicas/funcionalidades) & §6 \\
+10 & Definición de requisitos desde el usuario (Historias)& §3 \\
+\end{tabularx}
+\end{center}
+
+\begin{nota}[Repositorio y tablero]
+\textbf{Repositorio:} \repolink\\
+\textbf{Tablero Kanban:} Trello — historias de usuario en columnas \emph{To do},
+\emph{Doing} y \emph{Done} (recreado en la sección de Métricas).
+\end{nota}
+
+% =====================================================================
+\section{Product Backlog}
+El \textbf{Product Backlog} es la lista ordenada de todo lo que el producto podría
+necesitar; es la única fuente de requisitos. Cada elemento se prioriza por el
+\textbf{valor} que aporta y se estima en \textbf{puntos de historia}.
+
+\subsection{Priorización (MoSCoW)}
+\begin{itemize}
+  \item \textbf{Must} — imprescindible para el producto mínimo viable (MVP).
+  \item \textbf{Should} — importante, pero no bloquea el MVP.
+  \item \textbf{Could} — deseable; se incluye si hay capacidad.
+\end{itemize}
+
+\subsection{Backlog de historias de usuario}
+\begin{center}
+\footnotesize
+\begin{longtable}{@{}c l c c c l@{}}
+\rowcolor{guinda}
+\thead{ID} & \thead{Historia de usuario} & \thead{RF} & \thead{Prior.} & \thead{Pts} & \thead{Estado}\\
+\endhead
+HU1  & Registro de usuario              & RF01 & Must  & 3 & Done \\
+HU2  & Inicio de sesión                 & RF02 & Must  & 3 & Done \\
+HU6  & Búsqueda de cuidadores           & RF06 & Must  & 5 & Done \\
+HU7  & Recepción de solicitudes         & RF07 & Must  & 5 & Done \\
+HU8  & Agendar citas                    & RF10 & Must  & 8 & Done \\
+HU10 & Aceptar o rechazar solicitudes   & RF12 & Must  & 5 & Done \\
+HU13 & Notificaciones del sistema       & RF21 & Must  & 5 & Done \\
+HU15 & Consulta de agenda               & RF25 & Should& 5 & Done \\
+HU16 & Consulta del reglamento          & RF26 & Should& 2 & Done \\
+HU3  & Perfil del cuidador              & RF03 & Must  & 5 & Doing \\
+HU4  & Configuración de la tarifa       & RF04 & Must  & 3 & Doing \\
+HU5  & Perfil del tutor                 & RF05 & Must  & 5 & Doing \\
+HU9  & Recordatorios automáticos        & RF11 & Should& 5 & To do \\
+HU14 & Recordatorios de citas           & RF22 & Should& 3 & To do \\
+HU11 & Calificar cuidadores             & RF14 & Should& 5 & To do \\
+HU12 & Evaluar tutores (nota privada)   & RF15 & Could & 3 & To do \\
+\end{longtable}
+\end{center}
+\noindent\textbf{Total: 16 historias · 70 puntos de historia.}
+
+\subsection{Requisitos técnicos y no funcionales}
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}l X c@{}}
+\rowcolor{guinda}
+\thead{Tipo} & \thead{Requisito técnico} & \thead{Estado}\\
+\midrule
+Seguridad     & Hash de contraseñas con PBKDF2-HMAC-SHA256 + sal; verificación en tiempo constante. & Done \\
+Seguridad     & Validación y saneamiento de entradas (correo, contraseña, texto). & Done \\
+Arquitectura  & Separación por capas: modelos, servicios y pantallas. & Done \\
+Estado        & Manejo de estado con \textit{Provider} (\texttt{ChangeNotifier}). & Done \\
+Persistencia  & Almacenamiento local con \textit{SharedPreferences} (JSON). & Done \\
+UI/UX         & Tema visual unificado, diseño responsivo y accesible. & Done \\
+Compatibilidad& Ejecución en móvil (Android/iOS) y navegadores web. & Done \\
+\end{tabularx}
+\end{center}
+
+% =====================================================================
+\section{Historias de Usuario}
+Requisitos descritos desde la \textbf{perspectiva del usuario} con el formato
+\emph{Como\,/\,quiero\,/\,para} y sus criterios de aceptación.
+
+\subsection{Registro y autenticación}
+\begin{hu}{HU1 — Registro de usuario}{RF01}
+\rqp{visitante}{registrarme con mi correo, nombre y rol}{acceder a la plataforma}
+\begin{itemize}
+  \item El correo se valida y no puede estar duplicado.
+  \item La contraseña cumple política mínima (8+ caracteres, mayúscula, minúscula y número).
+  \item Al registrarme como cuidador se crea automáticamente mi perfil base.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU2 — Inicio de sesión}{RF02}
+\rqp{usuario registrado}{iniciar sesión de forma segura}{usar la aplicación según mi rol}
+\begin{itemize}
+  \item La contraseña se verifica contra un \emph{hash} (nunca en texto plano).
+  \item Se muestra un mensaje claro si las credenciales son incorrectas.
+\end{itemize}
+\end{hu}
+
+\subsection{Perfiles de usuario}
+\begin{hu}{HU3 — Perfil del cuidador}{RF03}
+\rqp{cuidador}{crear y editar mi perfil con foto, experiencia, certificaciones y disponibilidad}{que los tutores me conozcan y me contraten}
+\begin{itemize}
+  \item Puedo subir una foto de perfil.
+  \item Al guardar, mi perfil aparece en las búsquedas de los tutores.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU4 — Configuración de la tarifa}{RF04}
+\rqp{cuidador}{que mi tarifa esté asociada a mi nivel de experiencia}{cobrar un precio justo y coherente}
+\begin{itemize}
+  \item Al elegir el nivel de experiencia se sugiere una tarifa por hora.
+  \item La tarifa se valida como un número mayor que cero.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU5 — Perfil del tutor}{RF05}
+\rqp{tutor}{registrar la información de mis hijos y necesidades}{que el cuidador tenga el contexto necesario}
+\begin{itemize}
+  \item Registro dirección, hijos (nombre, edad, necesidades) y notas.
+\end{itemize}
+\end{hu}
+
+\subsection{Búsqueda, solicitudes y reservas}
+\begin{hu}{HU6 — Búsqueda de cuidadores}{RF06}
+\rqp{tutor}{buscar cuidadores por ubicación, precio, experiencia, calificación y disponibilidad}{encontrar al adecuado para mi familia}
+\begin{itemize}
+  \item Filtros combinados y búsqueda por nombre o habilidad.
+  \item Los resultados muestran tarifa, calificación y verificación.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU7 — Recepción de solicitudes}{RF07}
+\rqp{cuidador}{recibir solicitudes según mi ubicación y horario}{decidir cuáles atender}
+\begin{itemize}
+  \item Solicitudes organizadas por estado; notificación al llegar una nueva.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU8 — Agendar citas}{RF10}
+\rqp{tutor}{agendar una cita indicando fecha, hora y dirección}{reservar el servicio}
+\begin{itemize}
+  \item El sistema calcula el total estimado y deja la cita \emph{pendiente}.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU10 — Aceptar o rechazar solicitudes}{RF12}
+\rqp{cuidador}{aceptar o rechazar las citas que me agendan}{gestionar mi disponibilidad}
+\begin{itemize}
+  \item Al responder, la cita cambia de estado y se notifica al tutor.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU9 — Recordatorios automáticos}{RF11}
+\rqp{sistema}{generar recordatorios automáticos de citas próximas}{que nadie olvide sus compromisos}
+\begin{itemize}
+  \item Recordatorio para citas confirmadas dentro de 24 h, sin duplicar.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU14 — Recordatorios de citas}{RF22}
+\rqp{tutor o cuidador}{recibir un recordatorio de mis citas próximas}{prepararme con anticipación}
+\begin{itemize}
+  \item Se entrega a ambas partes y aparece en la bandeja de avisos.
+\end{itemize}
+\end{hu}
+
+\subsection{Reputación, comunicación, agenda y reglamento}
+\begin{hu}{HU11 — Calificar cuidadores}{RF14}
+\rqp{tutor}{calificar y reseñar al cuidador tras el servicio}{retroalimentar a la comunidad}
+\begin{itemize}
+  \item Una sola reseña por cita; recalcula el promedio y se muestra en el perfil.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU12 — Evaluar tutores}{RF15}
+\rqp{cuidador}{registrar una evaluación privada del tutor}{tener una referencia personal}
+\begin{itemize}
+  \item La calificación y el comentario son privados: solo los ve el autor.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU13 — Notificaciones del sistema}{RF21}
+\rqp{usuario}{recibir avisos de reservas, pagos y mensajes}{estar informado}
+\begin{itemize}
+  \item Bandeja con estado leído / no leído; notificación de pago al completar.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU15 — Consulta de agenda}{RF25}
+\rqp{tutor o cuidador}{consultar mi agenda en calendario}{organizar mi tiempo}
+\begin{itemize}
+  \item Las citas se muestran marcadas por fecha, con su detalle.
+\end{itemize}
+\end{hu}
+\begin{hu}{HU16 — Consulta del reglamento}{RF26}
+\rqp{cuidador}{consultar el reglamento y normas de conducta}{desempeñar correctamente mi labor}
+\begin{itemize}
+  \item El reglamento está disponible desde mi panel en todo momento.
+\end{itemize}
+\end{hu}
+
+% =====================================================================
+\section{Métricas de Proceso}
+El proyecto se organizó en \textbf{3 Sprints} de dos semanas, con \textbf{16
+historias} y \textbf{70 puntos de historia}.
+
+\subsection{Resumen de Sprints}
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}l X c c@{}}
+\rowcolor{guinda}
+\thead{Sprint} & \thead{Alcance (historias)} & \thead{Pts} & \thead{Estado}\\
+\midrule
+Sprint 1 & HU1, HU2, HU6, HU7, HU16             & 18 & Completado \\
+Sprint 2 & HU8, HU10, HU13, HU15                & 23 & Completado \\
+Sprint 3 & HU3, HU4, HU5, HU9, HU11, HU12, HU14 & 29 & En curso \\
+\end{tabularx}
+\end{center}
+
+\subsection{Velocidad del equipo}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[ybar, width=0.9\linewidth, height=6cm, bar width=26pt,
+  symbolic x coords={Sprint 1,Sprint 2,Sprint 3}, xtick=data, ymin=0, ymax=35,
+  ylabel={Puntos de historia}, ylabel style={font=\small},
+  nodes near coords, nodes near coords style={font=\footnotesize\bfseries},
+  enlarge x limits=0.28, axis lines=left,
+  every axis plot/.append style={fill=guinda, draw=guindaDark},
+  tick label style={font=\small}]
+\addplot coordinates {(Sprint 1,18) (Sprint 2,23) (Sprint 3,29)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\noindent\footnotesize\textit{Velocidad promedio (Sprints completados): 20{,}5 pts/Sprint;
+el Sprint 3 está en curso (planificado).}\normalsize
+
+\subsection{Gráfico de quemado del proyecto (Burndown)}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=0.9\linewidth, height=6.2cm, xlabel={Sprint},
+  ylabel={Puntos restantes}, xlabel style={font=\small}, ylabel style={font=\small},
+  xmin=0, xmax=3, ymin=0, ymax=72, xtick={0,1,2,3},
+  legend style={font=\footnotesize, at={(0.97,0.97)}, anchor=north east},
+  tick label style={font=\small}, grid=major, grid style={guinda!12}]
+\addplot[dashed, thick, gray, mark=none] coordinates {(0,70)(3,0)};
+\addplot[thick, guinda, mark=*, mark options={fill=guinda}] coordinates {(0,70)(1,52)(2,29)(3,0)};
+\legend{Ideal, Real / Proyectado}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\subsection{Tablero Kanban}
+\noindent
+\begin{minipage}[t]{0.32\textwidth}
+\kcol{To do (16 pts)}
+\kcard{\textbf{HU9} · Recordatorios automáticos}
+\kcard{\textbf{HU11} · Calificar cuidadores}
+\kcard{\textbf{HU12} · Evaluar tutores}
+\kcard{\textbf{HU14} · Recordatorios de citas}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\textwidth}
+\kcol{Doing (13 pts)}
+\kcard{\textbf{HU3} · Perfil del cuidador}
+\kcard{\textbf{HU4} · Configuración de la tarifa}
+\kcard{\textbf{HU5} · Perfil del tutor}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\textwidth}
+\kcol{Done (41 pts)}
+\kcard{\textbf{HU1} · Registro de usuario}
+\kcard{\textbf{HU2} · Inicio de sesión}
+\kcard{\textbf{HU6} · Búsqueda de cuidadores}
+\kcard{\textbf{HU7} · Recepción de solicitudes}
+\kcard{\textbf{HU8} · Agendar citas}
+\kcard{\textbf{HU10} · Aceptar/rechazar}
+\kcard{\textbf{HU13} · Notificaciones}
+\kcard{\textbf{HU15} · Consulta de agenda}
+\kcard{\textbf{HU16} · Consulta del reglamento}
+\end{minipage}
+
+% =====================================================================
+\section{Hoja de Ruta (Roadmap)}
+Visión estratégica a largo plazo: cómo evoluciona el producto en el tiempo.
+
+\begin{center}
+\begin{tikzpicture}[x=3.4cm,y=1cm]
+  \draw[line width=2pt, guinda!40] (0,0) -- (4,0);
+  \foreach \x/\lbl in {0/{Mayo 2026},1/{Junio 2026},2/{Julio 2026},3/{Q3 2026},4/{Q4 2026}}{
+    \fill[guinda] (\x,0) circle (3pt);
+    \node[below, font=\scriptsize\bfseries, text=guindaDark] at (\x,-0.15) {\lbl};
+  }
+  \node[above, font=\scriptsize, text width=2.5cm, align=center] at (0,0.2) {Fundamentos};
+  \node[above, font=\scriptsize, text width=2.5cm, align=center] at (1,0.2) {Reservas y comunicación};
+  \node[above, font=\scriptsize, text width=2.5cm, align=center] at (2,0.2) {Reputación y verificación};
+  \node[above, font=\scriptsize, text width=2.5cm, align=center] at (3,0.2) {Backend en la nube};
+  \node[above, font=\scriptsize, text width=2.5cm, align=center] at (4,0.2) {Tiendas y geolocalización};
+\end{tikzpicture}
+\end{center}
+
+\begin{fase}{Fase 1 — Fundamentos}{Mayo 2026}
+Registro e inicio de sesión seguro, perfiles, tarifa y búsqueda. \textbf{Historias:} HU1–HU6.
+\end{fase}
+\begin{fase}{Fase 2 — Reservas y comunicación}{Junio 2026}
+Solicitudes, agendado, aceptación/rechazo, notificaciones, recordatorios y agenda.
+\textbf{Historias:} HU7, HU8, HU10, HU13, HU9, HU14, HU15, HU16.
+\end{fase}
+\begin{fase}{Fase 3 — Reputación y verificación}{Julio 2026}
+Calificaciones, evaluación privada, verificación de antecedentes y pagos.
+\textbf{Historias:} HU11, HU12.
+\end{fase}
+\begin{fase}{Fase 4 — Escalamiento}{Q3 – Q4 2026}
+Backend en la nube, publicación en tiendas, geolocalización e integración de pagos.
+\end{fase}
+
+% =====================================================================
+\section{Plan de Lanzamientos}
+Desglose del producto en \textbf{épicas} y \textbf{funcionalidades}, agrupadas en versiones.
+
+\begin{epica}{Épica A}{Cuentas y perfiles}
+Registro e inicio de sesión (HU1, HU2), perfil del cuidador (HU3), tarifa (HU4) y perfil del tutor (HU5).
+\end{epica}
+\begin{epica}{Épica B}{Descubrimiento y reservas}
+Búsqueda (HU6), recepción de solicitudes (HU7), agendado (HU8) y aceptación/rechazo (HU10).
+\end{epica}
+\begin{epica}{Épica C}{Comunicación y recordatorios}
+Notificaciones (HU13), recordatorios (HU9, HU14), agenda (HU15) y reglamento (HU16).
+\end{epica}
+\begin{epica}{Épica D}{Reputación y confianza}
+Calificaciones (HU11), evaluación privada de tutores (HU12) y verificación de antecedentes.
+\end{epica}
+
+\subsection{Plan de versiones}
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}l l X c@{}}
+\rowcolor{guinda}
+\thead{Release} & \thead{Épicas} & \thead{Funcionalidades clave} & \thead{Estado}\\
+\midrule
+\textbf{v1.0 — MVP} & A, B & Registro, perfiles, tarifa, búsqueda, agendado y respuesta de citas. & En curso \\
+\textbf{v1.1} & C & Notificaciones, recordatorios, agenda y reglamento. & Planificado \\
+\textbf{v1.2} & D & Calificaciones, evaluación de tutores, verificación y pagos. & Planificado \\
+\textbf{v2.0} & — & Backend en la nube, publicación en tiendas, geolocalización. & Futuro \\
+\end{tabularx}
+\end{center}
+
+% =====================================================================
+\section{Registro de Impedimentos}
+Obstáculos detectados durante el desarrollo, con su impacto, acción y estado.
+
+\begin{center}
+\scriptsize
+\begin{longtable}{@{}c p{3.0cm} c p{4.0cm} c@{}}
+\rowcolor{guinda}
+\thead{ID} & \thead{Obstáculo} & \thead{Impacto} & \thead{Acción / Resolución} & \thead{Estado}\\
+\endhead
+IMP-01 & Soporte web no habilitado y sin carpeta \texttt{web/}. & Alto &
+  Se habilitó Flutter web y se generó la plataforma. & Resuelto \\
+IMP-02 & Contraseñas en texto plano. & Alto &
+  \emph{Hashing} PBKDF2-HMAC-SHA256 con sal y verificación segura. & Resuelto \\
+IMP-03 & Cuidador nuevo no podía crear su perfil ni tarifa. & Alto &
+  Perfil por defecto al registrar + flujo ``Configurar mi perfil''. & Resuelto \\
+IMP-04 & Sin cuentas de Administrador ni Supervisor para probar. & Medio &
+  Siembra idempotente de ambas cuentas sin borrar datos. & Resuelto \\
+IMP-05 & Logos institucionales entregados vacíos. & Medio &
+  Sustitución por los archivos oficiales (UACH y FING). & Resuelto \\
+IMP-06 & IDs de notificación podían colisionar en bucle. & Medio &
+  Microsegundos + contador incremental. & Resuelto \\
+IMP-07 & Prueba por defecto rompía la compilación. & Bajo &
+  Se eliminó y se añadió una prueba real de seguridad. & Resuelto \\
+IMP-08 & Sin verificación de antecedentes de cuidadores. & Medio &
+  Pestaña de verificación en el panel del Supervisor. & Resuelto \\
+\end{longtable}
+\end{center}
+\noindent\textbf{Indicadores:} 8 impedimentos (3 alto, 4 medio, 1 bajo) · 8/8 resueltos (100\%).
+
+% =====================================================================
+\section{Manual de Usuario}
+Guía de uso de la aplicación según el rol del usuario.
+
+\subsection{Cuentas de demostración}
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}l X l@{}}
+\rowcolor{guinda}
+\thead{Rol} & \thead{Correo} & \thead{Contraseña}\\
+\midrule
+Tutor          & carlos@nanyscare.com      & 123456 \\
+Cuidador       & maria@nanyscare.com       & 123456 \\
+Administrador  & admin@nanyscare.com       & 123456 \\
+Supervisor     & supervisor@nanyscare.com  & 123456 \\
+\end{tabularx}
+\end{center}
+
+\subsection{Tutor}
+\begin{paso}
+\textbf{Perfil:} configura dirección, hijos y necesidades (HU5).\\
+\textbf{Buscar:} aplica filtros y abre el perfil de un cuidador (HU6).\\
+\textbf{Agendar:} elige fecha, hora y dirección; el total se calcula solo (HU8).\\
+\textbf{Calificar / Agenda:} en \emph{Mis Citas → Historial} califica una cita
+completada (HU11); revisa el calendario en \emph{Agenda} (HU15).
+\end{paso}
+
+\subsection{Cuidador}
+\begin{paso}
+\textbf{Perfil y tarifa:} toca la foto para subir imagen; edita descripción,
+certificaciones, días/horario y tarifa según tu nivel (HU3, HU4).\\
+\textbf{Solicitudes:} acepta o rechaza citas; márcalas como completadas y deja una
+nota privada del tutor (HU7, HU10, HU12).\\
+\textbf{Reglamento:} consúltalo desde el menú inferior (HU16).
+\end{paso}
+
+\subsection{Avisos, Administrador y Supervisor}
+\begin{paso}
+\textbf{Avisos:} notificaciones de reservas, pagos y recordatorios (HU9, HU13, HU14).\\
+\textbf{Administrador:} resumen del sistema, usuarios, perfiles y citas.\\
+\textbf{Supervisor:} monitoreo, citas, verificación de antecedentes y comunicación.
+\end{paso}
+
+% =====================================================================
+\section{Decisiones de Arquitectura}
+Registro de las decisiones técnicas relevantes (ADR).
+
+\begin{adr}{ADR-01}{Framework: Flutter (Dart)}
+\adrcampo{Contexto} Una sola base de código para móvil y web.
+\adrcampo{Decisión} Usar Flutter con Material 3.
+\adrcampo{Consecuencias} Multiplataforma y UI consistente; curva de aprendizaje de Dart.
+\end{adr}
+\begin{adr}{ADR-02}{Arquitectura por capas}
+\adrcampo{Contexto} Mantener el código mantenible y testeable.
+\adrcampo{Decisión} Separar modelos, servicios y pantallas.
+\adrcampo{Consecuencias} Bajo acoplamiento y lógica reutilizable.
+\end{adr}
+\begin{adr}{ADR-03}{Estado con Provider}
+\adrcampo{Contexto} Compartir estado entre pantallas.
+\adrcampo{Decisión} Provider con \texttt{ChangeNotifier}.
+\adrcampo{Consecuencias} Reactividad sencilla y bajo \emph{boilerplate}.
+\end{adr}
+\begin{adr}{ADR-04}{Persistencia con SharedPreferences}
+\adrcampo{Contexto} El MVP no cuenta aún con backend.
+\adrcampo{Decisión} Datos como JSON en SharedPreferences, aislados en \texttt{StorageService}.
+\adrcampo{Consecuencias} Rápido y sin servidor; migrable a la nube sin tocar el resto.
+\end{adr}
+\begin{adr}{ADR-05}{Seguridad con PBKDF2}
+\adrcampo{Contexto} Proteger credenciales.
+\adrcampo{Decisión} PBKDF2-HMAC-SHA256 + sal, verificación en tiempo constante y validación de entradas.
+\adrcampo{Consecuencias} Las contraseñas nunca se guardan en claro.
+\end{adr}
+\begin{adr}{ADR-06}{Notificaciones y recordatorios simulados}
+\adrcampo{Contexto} Correos sin backend de correo.
+\adrcampo{Decisión} Notificaciones in-app y recordatorios al iniciar/refrescar.
+\adrcampo{Consecuencias} Demostrable sin SMTP; sustituible por correo/push real.
+\end{adr}
+\begin{adr}{ADR-07}{Control de acceso por rol}
+\adrcampo{Contexto} Cuatro actores: tutor, cuidador, administrador y supervisor.
+\adrcampo{Decisión} Enrutar la pantalla principal según el rol.
+\adrcampo{Consecuencias} Experiencia adaptada y funciones acotadas por rol.
+\end{adr}
+
+\vfill
+\begin{center}
+{\color{guinda}\rule{0.35\linewidth}{0.6pt}}\\[4pt]
+{\footnotesize\color{inkSoft} Proyecto Móvil: Nanys Care · Documento de Entregables · Mayo 2026}
+\end{center}
+
+\end{document}

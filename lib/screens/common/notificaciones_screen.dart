@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../models/notificacion.dart';
 import '../../services/auth_service.dart';
 import '../../services/notification_service.dart';
+import '../../services/reminder_service.dart';
 import '../../theme/app_theme.dart';
 
 class NotificacionesScreen extends StatefulWidget {
@@ -27,6 +28,9 @@ class _NotificacionesScreenState extends State<NotificacionesScreen> {
   Future<void> _load() async {
     final user = context.read<AuthService>().currentUser;
     if (user == null) return;
+    // HU9/HU14: regenera recordatorios de citas próximas al abrir/refrescar.
+    await context.read<ReminderService>().generarRecordatoriosPendientes();
+    if (!mounted) return;
     final svc = context.read<NotificationService>();
     final list = await svc.getNotificacionesUsuario(user.id);
     if (!mounted) return;

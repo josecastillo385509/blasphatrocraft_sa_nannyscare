@@ -7,10 +7,14 @@ import '../models/perfil_tutor.dart';
 import '../models/cita.dart';
 import '../models/resena.dart';
 import '../models/notificacion.dart';
+import 'security_service.dart';
 
 /// Servicio de almacenamiento local usando SharedPreferences.
 /// En producción se reemplazaría por un backend (Firebase, REST, etc.)
 class StorageService {
+  final SecurityService _security;
+  StorageService(this._security);
+
   static const _kUsers = 'users';
   static const _kCurrentUserId = 'current_user_id';
   static const _kPerfilesCuidador = 'perfiles_cuidador';
@@ -25,6 +29,42 @@ class StorageService {
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
     await _seedIfNeeded();
+    await _ensureStaffAccounts();
+  }
+
+  /// Garantiza que existan las cuentas de Administrador y Supervisor (actores
+  /// definidos en la especificación). Es idempotente: no toca a los demás
+  /// usuarios y se ejecuta también sobre instalaciones ya sembradas.
+  Future<void> _ensureStaffAccounts() async {
+    final users = await getUsers();
+    final now = DateTime.now();
+    var changed = false;
+
+    if (!users.any((u) => u.role == UserRole.administrador)) {
+      users.add(AppUser(
+        id: 'adm-001',
+        email: 'admin@nanyscare.com',
+        password: _security.hashPassword('123456'),
+        name: 'Admin Nanys',
+        role: UserRole.administrador,
+        phone: '614-0000001',
+        createdAt: now,
+      ));
+      changed = true;
+    }
+    if (!users.any((u) => u.role == UserRole.supervisor)) {
+      users.add(AppUser(
+        id: 'sup-001',
+        email: 'supervisor@nanyscare.com',
+        password: _security.hashPassword('123456'),
+        name: 'Supervisor Nanys',
+        role: UserRole.supervisor,
+        phone: '614-0000002',
+        createdAt: now,
+      ));
+      changed = true;
+    }
+    if (changed) await saveUsers(users);
   }
 
   // ==================== USUARIOS ====================
@@ -71,6 +111,16 @@ class StorageService {
     } else {
       perfiles.add(perfil);
     }
+    await savePerfilesCuidador(perfiles);
+  }
+
+  /// Verificación de antecedentes (caso de uso del Supervisor): marca o
+  /// desmarca a un cuidador como verificado.
+  Future<void> setVerificadoCuidador(String cuidadorId, bool value) async {
+    final perfiles = await getPerfilesCuidador();
+    final idx = perfiles.indexWhere((p) => p.userId == cuidadorId);
+    if (idx < 0) return;
+    perfiles[idx] = perfiles[idx].copyWith(verificado: value);
     await savePerfilesCuidador(perfiles);
   }
 
@@ -141,6 +191,28 @@ class StorageService {
     await _prefs.setString(_kResenas, raw);
   }
 
+  /// HU11: recalcula y persiste la calificación promedio de un cuidador
+  /// a partir de sus reseñas públicas.
+  Future<void> recalcularCalificacionCuidador(String cuidadorId) async {
+    final resenas = await getResenas();
+    final publicas = resenas
+        .where((r) => r.destinatarioId == cuidadorId && !r.esPrivada)
+        .toList();
+    if (publicas.isEmpty) return;
+
+    final promedio =
+        publicas.fold<double>(0, (s, r) => s + r.calificacion) / publicas.length;
+
+    final perfiles = await getPerfilesCuidador();
+    final idx = perfiles.indexWhere((p) => p.userId == cuidadorId);
+    if (idx < 0) return;
+
+    perfiles[idx] = perfiles[idx].copyWith(
+      calificacionPromedio: double.parse(promedio.toStringAsFixed(1)),
+    );
+    await savePerfilesCuidador(perfiles);
+  }
+
   // ==================== NOTIFICACIONES ====================
   Future<List<Notificacion>> getNotificaciones() async {
     final raw = _prefs.getString(_kNotificaciones);
@@ -171,7 +243,7 @@ class StorageService {
       AppUser(
         id: 'cui-001',
         email: 'maria@nanyscare.com',
-        password: '123456',
+        password: _security.hashPassword('123456'),
         name: 'María González',
         role: UserRole.cuidador,
         phone: '614-1234567',
@@ -180,7 +252,7 @@ class StorageService {
       AppUser(
         id: 'cui-002',
         email: 'ana@nanyscare.com',
-        password: '123456',
+        password: _security.hashPassword('123456'),
         name: 'Ana Martínez',
         role: UserRole.cuidador,
         phone: '614-2345678',
@@ -189,7 +261,7 @@ class StorageService {
       AppUser(
         id: 'cui-003',
         email: 'lucia@nanyscare.com',
-        password: '123456',
+        password: _security.hashPassword('123456'),
         name: 'Lucía Hernández',
         role: UserRole.cuidador,
         phone: '614-3456789',
@@ -198,7 +270,7 @@ class StorageService {
       AppUser(
         id: 'tut-001',
         email: 'carlos@nanyscare.com',
-        password: '123456',
+        password: _security.hashPassword('123456'),
         name: 'Carlos Ramírez',
         role: UserRole.tutor,
         phone: '614-4567890',

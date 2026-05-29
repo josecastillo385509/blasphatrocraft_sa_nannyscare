@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +11,7 @@ import '../../services/auth_service.dart';
 import '../../services/data_service.dart';
 import '../../services/storage_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/user_avatar.dart';
 
 class CuidadorPerfilScreen extends StatefulWidget {
   const CuidadorPerfilScreen({super.key});
@@ -46,6 +50,56 @@ class _CuidadorPerfilScreenState extends State<CuidadorPerfilScreen> {
     });
   }
 
+  /// RF03: permite al cuidador elegir una foto de perfil. Se guarda en
+  /// `AppUser.photoUrl` como data URI base64 (sin backend de archivos).
+  Future<void> _cambiarFoto() async {
+    final picker = ImagePicker();
+    final XFile? file = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 400,
+      maxHeight: 400,
+      imageQuality: 70,
+    );
+    if (file == null || !mounted) return;
+    final bytes = await file.readAsBytes();
+    final dataUri = 'data:image/jpeg;base64,${base64Encode(bytes)}';
+    if (!mounted) return;
+    final auth = context.read<AuthService>();
+    final user = auth.currentUser;
+    if (user == null) return;
+    await auth.updateUser(user.copyWith(photoUrl: dataUri));
+    if (mounted) setState(() {});
+  }
+
+  /// HU3/HU4: abre el editor. Si aún no hay perfil, parte de uno por defecto
+  /// (nivel principiante con su tarifa sugerida) para que el cuidador lo cree.
+  Future<void> _editarPerfil() async {
+    final user = context.read<AuthService>().currentUser;
+    if (user == null) return;
+    final base = _perfil ??
+        PerfilCuidador(
+          userId: user.id,
+          descripcion: '',
+          nivelExperiencia: NivelExperiencia.principiante,
+          certificaciones: const [],
+          capacidades: const [],
+          tarifaPorHora: NivelExperiencia.principiante.tarifaSugeridaPorHora,
+          ubicacion: '',
+          diasDisponibles: const [],
+          horarioDisponible: '',
+        );
+    final actualizado = await Navigator.push<PerfilCuidador>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => _EditarPerfilCuidadorScreen(perfil: base),
+      ),
+    );
+    if (actualizado != null && mounted) {
+      await context.read<DataService>().guardarPerfilCuidador(actualizado);
+      _load();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthService>();
@@ -60,23 +114,7 @@ class _CuidadorPerfilScreenState extends State<CuidadorPerfilScreen> {
           IconButton(
             tooltip: 'Editar perfil',
             icon: const Icon(Icons.edit),
-            onPressed: _perfil == null
-                ? null
-                : () async {
-                    final actualizado = await Navigator.push<PerfilCuidador>(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            _EditarPerfilCuidadorScreen(perfil: _perfil!),
-                      ),
-                    );
-                    if (actualizado != null) {
-                      await context
-                          .read<DataService>()
-                          .guardarPerfilCuidador(actualizado);
-                      _load();
-                    }
-                  },
+            onPressed: _loading ? null : _editarPerfil,
           ),
         ],
       ),
@@ -95,16 +133,30 @@ class _CuidadorPerfilScreenState extends State<CuidadorPerfilScreen> {
                   ),
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 48,
-                        backgroundColor: Colors.white,
-                        child: Text(
-                          (user?.name ?? '?').substring(0, 1).toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 36,
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      GestureDetector(
+                        onTap: _cambiarFoto,
+                        child: Stack(
+                          children: [
+                            UserAvatar(
+                              name: user?.name ?? '?',
+                              photoUrl: user?.photoUrl,
+                              radius: 48,
+                              backgroundColor: Colors.white,
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.camera_alt,
+                                    size: 16, color: Colors.white),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -237,7 +289,37 @@ class _CuidadorPerfilScreenState extends State<CuidadorPerfilScreen> {
                       ],
                     ),
                   ),
-                ],
+                ] else
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          const Icon(Icons.badge_outlined,
+                              color: AppColors.warning, size: 40),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Aún no has configurado tu perfil profesional',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: AppColors.textSecondary),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Configura tu experiencia y tarifa para aparecer en las búsquedas.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 12, color: AppColors.textLight),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.tune),
+                            label: const Text('Configurar mi perfil'),
+                            onPressed: _editarPerfil,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 8),
                 _seccionNotasPrivadas(),
                 const SizedBox(height: 20),
@@ -510,8 +592,13 @@ class _EditarPerfilCuidadorScreenState
                 prefixIcon: Icon(Icons.attach_money),
               ),
               keyboardType: TextInputType.number,
-              validator: (v) =>
-                  v == null || v.isEmpty ? 'Campo requerido' : null,
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return 'Campo requerido';
+                final tarifa = double.tryParse(v.trim());
+                if (tarifa == null) return 'Ingresa un número válido';
+                if (tarifa <= 0) return 'La tarifa debe ser mayor a 0';
+                return null;
+              },
             ),
             const SizedBox(height: 12),
             TextFormField(

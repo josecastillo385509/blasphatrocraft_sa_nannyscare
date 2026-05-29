@@ -7,7 +7,7 @@ import '../../models/cita.dart';
 import '../../models/resena.dart';
 import '../../services/auth_service.dart';
 import '../../services/cita_service.dart';
-import '../../services/storage_service.dart';
+import '../../services/resena_service.dart';
 import '../../theme/app_theme.dart';
 
 /// RF07: el cuidador recibe solicitudes. RF12: las acepta o rechaza.
@@ -243,9 +243,20 @@ class _SolicitudCard extends StatelessWidget {
     );
 
     if (ok == true && context.mounted) {
-      final storage = context.read<StorageService>();
+      final resenaSvc = context.read<ResenaService>();
       final auth = context.read<AuthService>();
-      await storage.addResena(Resena(
+
+      // HU12: una sola evaluación por cita.
+      if (await resenaSvc.yaCalifico(cita.id, auth.currentUser!.id)) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Ya evaluaste a este tutor')),
+          );
+        }
+        return;
+      }
+
+      await resenaSvc.crearResena(Resena(
         id: 'rp-${DateTime.now().millisecondsSinceEpoch}',
         citaId: cita.id,
         autorId: auth.currentUser!.id,
@@ -253,12 +264,12 @@ class _SolicitudCard extends StatelessWidget {
         destinatarioId: cita.tutorId,
         calificacion: rating,
         comentario: notaCtrl.text.trim(),
-        esPrivada: true,
+        esPrivada: true, // RF15: la evaluación del tutor es privada
         createdAt: DateTime.now(),
       ));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Nota privada guardada')),
+          const SnackBar(content: Text('Evaluación privada guardada')),
         );
       }
     }

@@ -1,0 +1,145 @@
+% ============================================================
+%  estilo_nanys.sty — Estilo común de los entregables de Nanys Care
+%  Paleta guinda (UACH), portada oscura reutilizable.
+%  Uso:  \usepackage{estilo_nanys}  y  \portada{Título}{Subtítulo}
+% ============================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{estilo_nanys}[2026/05/29 Estilo Nanys Care]
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[spanish,es-noindentfirst]{babel}
+\RequirePackage{lmodern}
+\RequirePackage[scaled=0.96]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\RequirePackage[a4paper,margin=2.5cm,headheight=16pt]{geometry}
+\RequirePackage{graphicx}
+\RequirePackage{pagecolor}
+\RequirePackage[table]{xcolor}
+\RequirePackage{enumitem}
+\RequirePackage{titlesec}
+\RequirePackage{fancyhdr}
+\RequirePackage{booktabs}
+\RequirePackage{tabularx}
+\RequirePackage{array}
+\RequirePackage{longtable}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{tikz}
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\RequirePackage{microtype}
+\RequirePackage[hidelinks]{hyperref}
+
+\graphicspath{{../imagenesPortada/}{imagenesPortada/}}
+
+% ---------- Paleta guinda ----------
+\definecolor{guinda}{HTML}{6E1423}
+\definecolor{guindaDark}{HTML}{4A0E18}
+\definecolor{coverBg}{HTML}{2B0A11}
+\definecolor{guindaSoft}{HTML}{45131C}
+\definecolor{guindaAccent}{HTML}{9B2D3F}
+\definecolor{offwhite}{HTML}{F3EEEC}
+\definecolor{muted}{HTML}{C9B7BB}
+\definecolor{ink}{HTML}{2B2B2B}
+\definecolor{inkSoft}{HTML}{6B6B6B}
+\definecolor{paper}{HTML}{FBF8F7}
+
+\hypersetup{colorlinks=true, linkcolor=guinda, urlcolor=guindaAccent}
+
+% ---------- Enlace al repositorio (reutilizable) ----------
+\newcommand{\repourl}{https://github.com/josecastillo385509/blasphatrocraft_sa_nannyscare}
+\newcommand{\repotexto}{github.com/josecastillo385509/blasphatrocraft\_sa\_nannyscare}
+\newcommand{\repolink}{\href{\repourl}{\repotexto}}
+
+% ---------- Encabezado / pie ----------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{guinda}\leaders\hrule height \headrulewidth\hfill}}
+\fancyhead[L]{\footnotesize\color{guinda}\textbf{Nanys\,Care}}
+\fancyhead[R]{\footnotesize\color{inkSoft}Desarrollo Basado en Plataformas}
+\fancyfoot[C]{\footnotesize\color{inkSoft}\thepage}
+
+% ---------- Secciones ----------
+\titleformat{\section}
+  {\Large\bfseries\color{guinda}}
+  {\colorbox{guinda}{\color{white}\bfseries\;\thesection\;}}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.7em}
+\titleformat{\subsection}{\large\bfseries\color{guindaDark}}{\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{1.0em}{0.4em}
+
+% ---------- Caja de nota ----------
+\newtcolorbox{nota}[1][Nota]{colback=guinda!6,colframe=guinda!40,coltitle=white,
+  fonttitle=\bfseries\small,title=#1,boxrule=0.7pt,arc=4pt,
+  left=8pt,right=8pt,top=6pt,bottom=6pt}
+
+% ---------- Estilo de tablas ----------
+\renewcommand{\arraystretch}{1.3}
+% Encabezado de tabla: usar \rowcolor{guinda} UNA vez al inicio de la fila,
+% y \thead{...} en cada celda solo para el texto en blanco/negrita.
+\newcommand{\thead}[1]{{\color{white}\bfseries #1}}
+
+% ============================================================
+%  Portada reutilizable:  \portada{Título}{Subtítulo}
+% ============================================================
+\newcommand{\portada}[2]{%
+\begin{titlepage}
+\pagecolor{coverBg}\color{offwhite}\thispagestyle{empty}
+\begin{center}
+
+\vspace*{0.2cm}
+
+% Banda blanca con los logos institucionales
+\begin{tcolorbox}[colback=white,colframe=white,arc=12pt,width=\textwidth,
+  boxsep=0pt,left=24pt,right=24pt,top=16pt,bottom=16pt]
+\begin{minipage}[c]{0.42\textwidth}\centering
+  \includegraphics[height=2.9cm,keepaspectratio]{uach.png}
+\end{minipage}\hfill
+\textcolor{guinda!25}{\rule{0.7pt}{2.9cm}}\hfill
+\begin{minipage}[c]{0.42\textwidth}\centering
+  \includegraphics[height=2.9cm,keepaspectratio]{fing.png}
+\end{minipage}
+\end{tcolorbox}
+
+\vfill
+
+{\color{guindaAccent}\rule{4cm}{1.2pt}}\\[0.6cm]
+{\fontsize{30}{36}\selectfont\bfseries Proyecto Móvil: Nanys Care}\\[0.5cm]
+{\LARGE\bfseries\color{offwhite} #1}\\[0.25cm]
+{\large\color{muted} #2}\\[0.5cm]
+{\color{guindaAccent}\rule{4cm}{1.2pt}}
+
+\vfill
+
+\begin{tcolorbox}[colback=guindaSoft,colframe=guindaAccent,arc=8pt,
+  width=0.86\textwidth,boxsep=3pt,left=16pt,right=16pt,top=10pt,bottom=10pt,halign=center]
+{\footnotesize\color{muted}MATERIA}\\[2pt]
+{\bfseries\color{offwhite} Desarrollo Basado en Plataformas}\\[8pt]
+{\footnotesize\color{muted}DOCENTE}\\[2pt]
+{\bfseries\color{offwhite} Adrián Alberto Alarcón Osollo}
+\end{tcolorbox}
+
+\vspace{0.45cm}
+{\footnotesize\color{muted}INTEGRANTES DEL EQUIPO}\\[6pt]
+\begin{tcolorbox}[colback=coverBg,colframe=guinda,arc=8pt,
+  width=0.86\textwidth,boxsep=2pt,left=18pt,right=18pt,top=8pt,bottom=8pt]
+\color{offwhite}\small
+\begin{tabular}{@{}l r@{}}
+Emilio Eduardo Sánchez Fuentes   & \textcolor{muted}{385524}\\
+Gadiel Isaac Vázquez Meraz       & \textcolor{muted}{385830}\\
+José Armando Castillo Navarrete  & \textcolor{muted}{385509}\\
+Rubén Iván García Menéndez       & \textcolor{muted}{385508}\\
+Martha Alejandra Rico Ramos      & \textcolor{muted}{391541}\\
+\end{tabular}
+\end{tcolorbox}
+
+\vfill
+{\footnotesize\color{muted} Chihuahua, Chih. \textbullet{} Mayo 2026 \textbullet{} Versión 1.0}\\[4pt]
+{\scriptsize\color{muted} Repositorio: \repotexto}
+
+\end{center}
+\end{titlepage}
+\nopagecolor\color{ink}
+}
+\endinput

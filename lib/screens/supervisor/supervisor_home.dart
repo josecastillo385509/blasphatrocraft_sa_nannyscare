@@ -4,9 +4,12 @@ import 'package:provider/provider.dart';
 
 import '../../models/cita.dart';
 import '../../models/notificacion.dart';
+import '../../models/perfil_cuidador.dart';
+import '../../models/user.dart';
 import '../../services/auth_service.dart';
 import '../../services/storage_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/user_avatar.dart';
 
 class SupervisorHome extends StatefulWidget {
   const SupervisorHome({super.key});
@@ -20,12 +23,14 @@ class _SupervisorHomeState extends State<SupervisorHome>
   late TabController _tab;
   List<Cita> _citas = [];
   List<Notificacion> _notifs = [];
+  List<PerfilCuidador> _cuidadores = [];
+  List<AppUser> _users = [];
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _tab = TabController(length: 3, vsync: this);
+    _tab = TabController(length: 4, vsync: this);
     _load();
   }
 
@@ -33,13 +38,44 @@ class _SupervisorHomeState extends State<SupervisorHome>
     final storage = context.read<StorageService>();
     final c = await storage.getCitas();
     final n = await storage.getNotificaciones();
+    final p = await storage.getPerfilesCuidador();
+    final u = await storage.getUsers();
     c.sort((a, b) => b.fechaInicio.compareTo(a.fechaInicio));
     n.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    if (!mounted) return;
     setState(() {
       _citas = c;
       _notifs = n;
+      _cuidadores = p;
+      _users = u;
       _loading = false;
     });
+  }
+
+  String _nombreUsuario(String id) => _users
+      .firstWhere(
+        (u) => u.id == id,
+        orElse: () => AppUser(
+          id: id,
+          email: '',
+          password: '',
+          name: '(desconocido)',
+          role: UserRole.cuidador,
+          createdAt: DateTime.now(),
+        ),
+      )
+      .name;
+
+  String? _fotoUsuario(String id) {
+    for (final u in _users) {
+      if (u.id == id) return u.photoUrl;
+    }
+    return null;
+  }
+
+  Future<void> _toggleVerificado(PerfilCuidador p, bool value) async {
+    await context.read<StorageService>().setVerificadoCuidador(p.userId, value);
+    await _load();
   }
 
   Color _colorEstado(EstadoCita e) {
@@ -65,9 +101,11 @@ class _SupervisorHomeState extends State<SupervisorHome>
         title: const Text('Panel Supervisor'),
         bottom: TabBar(
           controller: _tab,
+          isScrollable: true,
           tabs: const [
             Tab(icon: Icon(Icons.dashboard), text: 'Monitor'),
             Tab(icon: Icon(Icons.event_note), text: 'Citas'),
+            Tab(icon: Icon(Icons.verified_user), text: 'Verificación'),
             Tab(icon: Icon(Icons.email), text: 'Comunicación'),
           ],
         ),
@@ -111,6 +149,7 @@ class _SupervisorHomeState extends State<SupervisorHome>
               children: [
                 _buildMonitor(),
                 _buildCitas(),
+                _buildVerificacion(),
                 _buildComunicacion(),
               ],
             ),
@@ -342,6 +381,72 @@ class _SupervisorHomeState extends State<SupervisorHome>
                     fontWeight: FontWeight.bold, fontSize: 12)),
           ),
           Expanded(child: Text(v, style: const TextStyle(fontSize: 12))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVerificacion() {
+    if (_cuidadores.isEmpty) {
+      return const Center(child: Text('No hay cuidadores registrados'));
+    }
+    final verificados = _cuidadores.where((c) => c.verificado).length;
+    return RefreshIndicator(
+      onRefresh: _load,
+      child: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          Card(
+            color: AppColors.info.withValues(alpha: 0.08),
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                children: [
+                  const Icon(Icons.verified_user, color: AppColors.info),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Verificación de antecedentes\n'
+                      '$verificados de ${_cuidadores.length} cuidadores verificados',
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          ..._cuidadores.map((p) {
+            final nombre = _nombreUsuario(p.userId);
+            return Card(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              child: SwitchListTile(
+                secondary: UserAvatar(
+                  name: nombre,
+                  photoUrl: _fotoUsuario(p.userId),
+                  radius: 22,
+                ),
+                title: Row(
+                  children: [
+                    Flexible(child: Text(nombre)),
+                    if (p.verificado) ...[
+                      const SizedBox(width: 6),
+                      const Icon(Icons.verified,
+                          color: AppColors.info, size: 16),
+                    ],
+                  ],
+                ),
+                subtitle: Text(
+                  '${p.nivelExperiencia.label}\n${p.ubicacion.isEmpty ? 'Sin ubicación' : p.ubicacion}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                isThreeLine: true,
+                value: p.verificado,
+                activeThumbColor: AppColors.info,
+                onChanged: (v) => _toggleVerificado(p, v),
+              ),
+            );
+          }),
         ],
       ),
     );

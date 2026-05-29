@@ -8,6 +8,7 @@ import 'storage_service.dart';
 /// En producción se integraría con un servicio SMTP o de push notifications.
 class NotificationService extends ChangeNotifier {
   final StorageService _storage;
+  int _seq = 0; // garantiza IDs únicos aunque se generen en un bucle
 
   NotificationService(this._storage);
 
@@ -30,7 +31,7 @@ class NotificationService extends ChangeNotifier {
     required TipoNotificacion tipo,
   }) async {
     final notif = Notificacion(
-      id: 'notif-${DateTime.now().millisecondsSinceEpoch}',
+      id: 'notif-${DateTime.now().microsecondsSinceEpoch}-${_seq++}',
       usuarioId: usuarioId,
       titulo: titulo,
       mensaje: mensaje,

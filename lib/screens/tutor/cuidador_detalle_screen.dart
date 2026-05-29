@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import '../../models/resena.dart';
 import '../../services/data_service.dart';
+import '../../services/resena_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/user_avatar.dart';
 import 'agendar_cita_screen.dart';
 
 class CuidadorDetalleScreen extends StatelessWidget {
@@ -35,17 +40,11 @@ class CuidadorDetalleScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(height: 30),
-                      CircleAvatar(
+                      UserAvatar(
+                        name: user.name,
+                        photoUrl: user.photoUrl,
                         radius: 50,
                         backgroundColor: Colors.white,
-                        child: Text(
-                          user.name.substring(0, 1).toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
-                        ),
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -195,6 +194,9 @@ class CuidadorDetalleScreen extends StatelessWidget {
                             ))
                         .toList(),
                   ),
+                  const SizedBox(height: 20),
+                  _SectionTitle('Reseñas'),
+                  _ResenasCuidador(cuidadorId: user.id),
                   const SizedBox(height: 30),
                   Row(
                     children: [
@@ -243,6 +245,83 @@ class _SectionTitle extends StatelessWidget {
           color: AppColors.textPrimary,
         ),
       ),
+    );
+  }
+}
+
+class _ResenasCuidador extends StatelessWidget {
+  final String cuidadorId;
+  const _ResenasCuidador({required this.cuidadorId});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Resena>>(
+      future: context.read<ResenaService>().getResenasPublicas(cuidadorId),
+      builder: (context, snap) {
+        if (!snap.hasData) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: LinearProgressIndicator(),
+          );
+        }
+        final resenas = snap.data!;
+        if (resenas.isEmpty) {
+          return const Text(
+            'Aún no tiene reseñas',
+            style: TextStyle(color: AppColors.textSecondary),
+          );
+        }
+        final df = DateFormat('dd/MM/yyyy', 'es_MX');
+        return Column(
+          children: resenas.map((r) {
+            return Card(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        ...List.generate(
+                          5,
+                          (i) => Icon(
+                            i < r.calificacion.round()
+                                ? Icons.star
+                                : Icons.star_border,
+                            color: AppColors.warning,
+                            size: 16,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          df.format(r.createdAt),
+                          style: const TextStyle(
+                              fontSize: 11, color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      r.autorNombre,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 13),
+                    ),
+                    if (r.comentario.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        r.comentario,
+                        style: const TextStyle(
+                            fontSize: 13, color: AppColors.textSecondary),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }

@@ -73,6 +73,27 @@ class PerfilCuidador {
         'verificado': verificado,
       };
 
+  PerfilCuidador copyWith({
+    double? calificacionPromedio,
+    int? totalServicios,
+    bool? verificado,
+  }) {
+    return PerfilCuidador(
+      userId: userId,
+      descripcion: descripcion,
+      nivelExperiencia: nivelExperiencia,
+      certificaciones: certificaciones,
+      capacidades: capacidades,
+      tarifaPorHora: tarifaPorHora,
+      ubicacion: ubicacion,
+      diasDisponibles: diasDisponibles,
+      horarioDisponible: horarioDisponible,
+      calificacionPromedio: calificacionPromedio ?? this.calificacionPromedio,
+      totalServicios: totalServicios ?? this.totalServicios,
+      verificado: verificado ?? this.verificado,
+    );
+  }
+
   factory PerfilCuidador.fromJson(Map<String, dynamic> json) => PerfilCuidador(
         userId: json['userId'],
         descripcion: json['descripcion'],

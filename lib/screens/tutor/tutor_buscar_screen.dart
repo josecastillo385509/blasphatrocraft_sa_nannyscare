@@ -6,6 +6,7 @@ import '../../models/perfil_cuidador.dart';
 import '../../services/auth_service.dart';
 import '../../services/data_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/user_avatar.dart';
 import 'cuidador_detalle_screen.dart';
 
 /// RF06: búsqueda de cuidadores por ubicación, disponibilidad, precio, etc.
@@ -294,17 +295,10 @@ class _CuidadorCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
+              UserAvatar(
+                name: cuidador.usuario.name,
+                photoUrl: cuidador.usuario.photoUrl,
                 radius: 32,
-                backgroundColor: AppColors.primaryLight,
-                child: Text(
-                  cuidador.usuario.name.substring(0, 1).toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-                  ),
-                ),
               ),
               const SizedBox(width: 14),
               Expanded(

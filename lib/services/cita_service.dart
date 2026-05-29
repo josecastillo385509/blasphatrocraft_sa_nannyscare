@@ -132,8 +132,27 @@ class CitaService extends ChangeNotifier {
     final all = await _storage.getCitas();
     final idx = all.indexWhere((c) => c.id == citaId);
     if (idx < 0) return;
-    await _storage
-        .updateCita(all[idx].copyWith(estado: EstadoCita.completada));
+    final cita = all[idx];
+    await _storage.updateCita(cita.copyWith(estado: EstadoCita.completada));
+
+    // RF21: notificación de pago al tutor por el servicio completado.
+    await _notifications.enviarNotificacion(
+      usuarioId: cita.tutorId,
+      titulo: 'Pago del servicio',
+      mensaje:
+          'Servicio con ${cita.cuidadorNombre} completado. Total a pagar: '
+          '\$${cita.totalEstimado.toStringAsFixed(2)} MXN.',
+      tipo: TipoNotificacion.pago,
+    );
+    // Confirmación de ingreso al cuidador.
+    await _notifications.enviarNotificacion(
+      usuarioId: cita.cuidadorId,
+      titulo: 'Servicio completado',
+      mensaje:
+          'Registramos tu servicio con ${cita.tutorNombre}. Ingreso estimado: '
+          '\$${cita.totalEstimado.toStringAsFixed(2)} MXN.',
+      tipo: TipoNotificacion.pago,
+    );
     notifyListeners();
   }
 

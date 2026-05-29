@@ -7,7 +7,7 @@ import '../../models/cita.dart';
 import '../../models/resena.dart';
 import '../../services/auth_service.dart';
 import '../../services/cita_service.dart';
-import '../../services/storage_service.dart';
+import '../../services/resena_service.dart';
 import '../../theme/app_theme.dart';
 
 class TutorCitasScreen extends StatefulWidget {
@@ -150,6 +150,20 @@ class _CitaCard extends StatelessWidget {
   }
 
   Future<void> _calificar(BuildContext context) async {
+    final resenaSvc = context.read<ResenaService>();
+    final auth = context.read<AuthService>();
+
+    // HU11: evita que un tutor califique la misma cita más de una vez.
+    if (await resenaSvc.yaCalifico(cita.id, auth.currentUser!.id)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ya calificaste esta cita')),
+        );
+      }
+      return;
+    }
+    if (!context.mounted) return;
+
     double rating = 5.0;
     final comentarioCtrl = TextEditingController();
 
@@ -196,8 +210,6 @@ class _CitaCard extends StatelessWidget {
     );
 
     if (ok == true) {
-      final storage = context.read<StorageService>();
-      final auth = context.read<AuthService>();
       final resena = Resena(
         id: 'r-${DateTime.now().millisecondsSinceEpoch}',
         citaId: cita.id,
@@ -209,7 +221,8 @@ class _CitaCard extends StatelessWidget {
         esPrivada: false, // RF14: pública
         createdAt: DateTime.now(),
       );
-      await storage.addResena(resena);
+      // HU11: registra la reseña y recalcula el promedio del cuidador.
+      await resenaSvc.crearResena(resena);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('¡Gracias por tu reseña!')),

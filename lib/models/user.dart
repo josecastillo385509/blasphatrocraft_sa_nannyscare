@@ -3,7 +3,7 @@ enum UserRole { tutor, cuidador, administrador, supervisor }
 class AppUser {
   final String id;
   final String email;
-  final String password; // En producción debería estar hasheado
+  final String password; // Hash PBKDF2 (ver SecurityService), nunca texto plano
   final String name;
   final UserRole role;
   final String? photoUrl;
@@ -47,11 +47,12 @@ class AppUser {
     String? name,
     String? photoUrl,
     String? phone,
+    String? password,
   }) {
     return AppUser(
       id: id,
       email: email,
-      password: password,
+      password: password ?? this.password,
       name: name ?? this.name,
       role: role,
       photoUrl: photoUrl ?? this.photoUrl,
